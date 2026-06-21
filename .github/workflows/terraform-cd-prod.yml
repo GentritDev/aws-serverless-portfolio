@@ -1,0 +1,54 @@
+name: Terraform CD - Deploy Prod
+
+# Applies on push to `main`. Uses a GitHub Environment ("production") with a
+# required reviewer configured in repo Settings -> Environments, so every
+# prod deploy needs a human click-to-approve, even though it's triggered
+# automatically.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "terraform/**"
+      - "lambda/**"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  TF_VERSION: "1.7.5"
+  AWS_REGION: "us-east-1"
+
+jobs:
+  deploy-prod:
+    name: Apply (prod)
+    runs-on: ubuntu-latest
+    environment: production   # <-- protection rule + required reviewer lives here
+    defaults:
+      run:
+        working-directory: terraform/environments/prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Init
+        run: terraform init -input=false
+
+      - name: Terraform Plan
+        run: terraform plan -input=false -no-color
+
+      - name: Terraform Apply
+        run: terraform apply -input=false -auto-approve
+
+      - name: Show outputs
+        run: terraform output

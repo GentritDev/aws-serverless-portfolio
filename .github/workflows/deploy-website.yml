@@ -1,0 +1,44 @@
+name: Deploy Website Content
+
+# Separate from the infra pipeline on purpose: editing index.html shouldn't
+# require a full `terraform apply` run. This just syncs files to S3 and
+# busts the CloudFront cache.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "website/**"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: "us-east-1"
+
+jobs:
+  deploy-website:
+    name: Sync website (prod)
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync to S3
+        run: |
+          aws s3 sync website/ "s3://${{ secrets.PROD_S3_BUCKET_NAME }}" \
+            --delete \
+            --cache-control "public,max-age=300"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ secrets.PROD_CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/*"

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gentrit Krasniqi — Cloud & AI Engineering Portfolio</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #131c31;
+      --accent: #4f9dff;
+      --text: #e6edf7;
+      --muted: #8b9bb4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 { font-size: 2rem; margin-bottom: 0.25rem; }
+    p.subtitle { color: var(--muted); margin-top: 0; }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.5rem 2.5rem;
+      margin-top: 2rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .count { font-size: 2.5rem; font-weight: 700; color: var(--accent); }
+    .label { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .stack { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; max-width: 480px; }
+    .pill {
+      background: rgba(79,157,255,0.12);
+      border: 1px solid rgba(79,157,255,0.3);
+      color: var(--accent);
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gentrit Krasniqi</h1>
+  <p class="subtitle">Serverless AWS Portfolio — built with Terraform, Lambda, DynamoDB & CloudFront</p>
+
+  <div class="card">
+    <div class="count" id="visitor-count">—</div>
+    <div class="label">Visitors</div>
+  </div>
+
+  <div class="stack">
+    <span class="pill">Terraform</span>
+    <span class="pill">AWS Lambda</span>
+    <span class="pill">API Gateway</span>
+    <span class="pill">DynamoDB</span>
+    <span class="pill">CloudFront</span>
+    <span class="pill">Route53</span>
+    <span class="pill">GitHub Actions</span>
+  </div>
+
+  <script>
+    // Replace with your deployed API Gateway invoke URL (Terraform output: api_endpoint)
+    const API_ENDPOINT = "https://REPLACE-ME.execute-api.us-east-1.amazonaws.com/visitors";
+
+    fetch(API_ENDPOINT)
+      .then((res) => res.json())
+      .then((data) => {
+        document.getElementById("visitor-count").textContent = data.visitors;
+      })
+      .catch(() => {
+        document.getElementById("visitor-count").textContent = "N/A";
+      });
+  </script>
+</body>
+</html>

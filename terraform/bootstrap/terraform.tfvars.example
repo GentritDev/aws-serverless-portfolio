@@ -1,0 +1,4 @@
+aws_region        = "us-east-1"
+project_name      = "serverless-portfolio"
+state_bucket_name = "CHANGE-ME-globally-unique-tfstate-bucket"
+lock_table_name   = "terraform-state-locks"
