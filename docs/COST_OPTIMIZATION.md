@@ -56,7 +56,6 @@ becomes a surprise.
 
 ## If You Wanted to Scale This Up Later
 
-Worth knowing for an interview, even if not implemented:
 - CloudFront caching could be tuned more aggressively (longer TTLs) to
   cut S3 GET requests further at real scale.
 - DynamoDB could switch to provisioned capacity + auto-scaling once
