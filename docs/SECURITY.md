@@ -59,18 +59,3 @@
   misconfiguration or attempted abuse surfaces as an email alert, not
   silence.
 
-## What's Deliberately Out of Scope (and why)
-
-A from-scratch project has to draw a line somewhere. Documented honestly
-here rather than silently skipped:
-
-- **WAF** is not attached to CloudFront — would add real protection
-  against common web exploits, but also a small monthly cost outside
-  the free tier. Natural "v2" addition.
-- **API authentication** (Cognito/API keys) — the `/visitors` endpoint is
-  intentionally public/anonymous (it's a visitor counter). A project with
-  user-specific data would need Cognito authorizers on the API Gateway
-  route.
-- **Secrets Manager / Parameter Store** — this project has no API keys or
-  passwords to store; if it grows one, this is where it would live rather
-  than as a Lambda environment variable.
